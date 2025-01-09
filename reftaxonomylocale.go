@@ -4,6 +4,7 @@ package phoebe
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/phoebe-bird/phoebe-go/internal/apijson"
@@ -38,6 +39,9 @@ func NewRefTaxonomyLocaleService(opts ...option.RequestOption) (r *RefTaxonomyLo
 // NOTE: The locale codes and names are stable but the other fields in this result
 // are not yet finalized and should be used with caution.
 func (r *RefTaxonomyLocaleService) List(ctx context.Context, query RefTaxonomyLocaleListParams, opts ...option.RequestOption) (res *[]RefTaxonomyLocaleListResponse, err error) {
+	if query.AcceptLanguage.Present {
+		opts = append(opts, option.WithHeader("Accept-Language", fmt.Sprintf("%s", query.AcceptLanguage)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "ref/taxa-locales/ebird"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
